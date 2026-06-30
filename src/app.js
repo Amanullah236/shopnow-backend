@@ -4,7 +4,6 @@ const cors = require("cors");
 const app = express();
 
 
-// CORS CONFIG
 const corsOptions = {
   origin: [
     "https://shopnow-frontend-sable.vercel.app",
@@ -19,72 +18,45 @@ const corsOptions = {
     "PUT",
     "DELETE",
     "PATCH",
-    "OPTIONS"
+    "OPTIONS",
   ],
 
   allowedHeaders: [
     "Content-Type",
-    "Authorization"
+    "Authorization",
   ],
 };
 
 
-// Apply CORS first
+// CORS first
 app.use(cors(corsOptions));
 
 
-// Preflight
-app.options("*", cors(corsOptions));
+// Manual preflight
+app.use((req, res, next) => {
+
+  if (req.method === "OPTIONS") {
+    res.header(
+      "Access-Control-Allow-Origin",
+      "https://shopnow-frontend-sable.vercel.app"
+    );
+
+    res.header(
+      "Access-Control-Allow-Methods",
+      "GET,POST,PUT,DELETE,PATCH,OPTIONS"
+    );
+
+    res.header(
+      "Access-Control-Allow-Headers",
+      "Content-Type, Authorization"
+    );
+
+    return res.sendStatus(200);
+  }
+
+  next();
+});
 
 
-// Body parser
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-
-// Routes
-const authRoutes = require("./routes/authRoutes");
-const productRoutes = require("./routes/productRoutes");
-const categoryRoutes = require("./routes/categoryRoutes");
-const cartRoutes = require("./routes/cartRoutes");
-const orderRoutes = require("./routes/orderRoutes");
-const userRoutes = require("./routes/userRoutes");
-
-
-app.use("/api/auth", authRoutes);
-app.use("/api/products", productRoutes);
-app.use("/api/categories", categoryRoutes);
-app.use("/api/cart", cartRoutes);
-app.use("/api/orders", orderRoutes);
-app.use("/api/users", userRoutes);
-
-
-// Health
-app.get("/api/health", (req,res)=>{
-  res.status(200).json({
-    success:true,
-    message:"Server is running"
-  });
-});
-
-
-// Error
-app.use((req,res)=>{
-  res.status(404).json({
-    success:false,
-    message:"Route not found"
-  });
-});
-
-
-app.use((err,req,res,next)=>{
-  console.log(err);
-
-  res.status(500).json({
-    success:false,
-    message:"Server Error"
-  });
-});
-
-
-module.exports = app;
+app.use(express.urlencoded({ extended:true }));
