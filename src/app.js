@@ -7,8 +7,7 @@ const app = express();
 app.use(
   cors({
     origin: [
-      "https://shopnowfrontend.vercel.app",
-      "https://shopnowback.vercel.app",
+      "https://shopnow-frontend-sable.vercel.app",
       "http://localhost:5173",
     ],
     credentials: true,
