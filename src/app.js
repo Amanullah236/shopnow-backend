@@ -30,7 +30,21 @@ const corsOptions = {
 
 // CORS first
 app.use(cors(corsOptions));
+app.use((req,res,next)=>{
 
+res.header(
+"Access-Control-Allow-Origin",
+"https://shopnow-frontend-sable.vercel.app"
+);
+
+res.header(
+"Access-Control-Allow-Credentials",
+"true"
+);
+
+next();
+
+});
 
 // Manual preflight
 app.use((req, res, next) => {
